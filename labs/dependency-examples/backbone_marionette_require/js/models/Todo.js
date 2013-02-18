@@ -1,22 +1,35 @@
+define(function()
+{
+  return Backbone.Model.extend(
+  {
+    defaults:
+    {
+      title: '',
+      created: 0,
+      completed: false
+    },
 
-define(['backbone','lib/backbone-localStorage'],function(Backbone){
-  'use strict';
-
-  var Todo = Backbone.Model.extend({
     localStorage: new Backbone.LocalStorage('todos-backbone'),
-    defaults: {
-      title     : '',
-      completed : false,
-      created   : 0
+
+    initialize: function()
+    {
+      if (this.isNew())
+        this.set('created', Date.now());
     },
-    initialize : function() {
-      if (this.isNew()) this.set('created', Date.now());
+
+    isCompleted: function()
+    {
+      return this.get('completed');
     },
-    toggle  : function() {
+
+    created: function()
+    {
+      return this.get('created');
+    },
+
+    toggle: function()
+    {
       return this.set('completed', !this.get('completed'));
     }
   });
-
-  return Todo;
 });
-

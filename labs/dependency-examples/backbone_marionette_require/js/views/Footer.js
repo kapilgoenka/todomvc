@@ -1,22 +1,30 @@
-/*global define*/
+define([
+  'templates',
+  'views/ActiveCount'
+], function (templates, ActiveCount)
+{
+  return Marionette.Layout.extend(
+  {
+    template: templates.footer,
 
-define(['marionette','vent','templates','views/ActiveCount'], function (Marionette,vent,templates,ActiveCount) {
-  "use strict";
+    regions:
+    {
+      count: '#todo-count strong'
+    },
 
-  return Marionette.Layout.extend({
-    template : templates.footer,
-    regions : {
-      count : '#todo-count strong'
+    events:
+    {
+      'click #clear-completed': 'clearCompletedClick'
     },
-    events : {
-      'click #clear-completed' : 'clearCompletedClick'
+
+    onRender: function()
+    {
+      this.count.show(new ActiveCount({collection: this.collection}));
     },
-    onRender : function() {
-      this.count.show(new ActiveCount({collection : this.collection}));
-    },
-    clearCompletedClick : function() {
-      vent.trigger('todoList:clear:completed');
+
+    clearCompletedClick: function()
+    {
+      NotificationCenter.trigger('todoList:clear:completed');
     }
   });
-
 });

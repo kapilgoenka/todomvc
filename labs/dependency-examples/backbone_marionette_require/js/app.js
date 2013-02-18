@@ -1,50 +1,66 @@
-define(
-  ['marionette','vent','collections/TodoList','views/Header','views/TodoListCompositeView','views/Footer'],
-  function(marionette, vent, TodoList, Header, TodoListCompositeView, Footer){
-    "use strict";
+define([
+  'views/Header',
+  'views/Footer',
+  'views/TodoListCompositeView',
+  'collections/TodoList'
+], function(Header, Footer, TodoListCompositeView, TodoList)
+{
+  var App = new Marionette.Application();
+  var todoList = new TodoList();
 
-    var app = new marionette.Application(),
-        todoList = new TodoList();
+  App.addRegions(
+  {
+    header: '#header',
+    main: '#main',
+    footer: '#footer'
+  });
 
+  App.addInitializer(function()
+  {
+    window.NotificationCenter = new Marionette.EventAggregator();
+  });
+
+  App.addInitializer(function()
+  {
     todoList.fetch();
+  });
 
-    app.addRegions({
-      header : '#header',
-      main   : '#main',
-      footer : '#footer'
-    });
+  App.addInitializer(function()
+  {
+    var viewOptions = { collection: todoList };
+    App.header.show(new Header(viewOptions));
+    App.main.show(new TodoListCompositeView(viewOptions));
+    App.footer.show(new Footer(viewOptions));
+  });
 
-    app.addInitializer(function(){
-
-      var viewOptions = {
-        collection : todoList
-      };
-
-      app.header.show(new Header(viewOptions));
-      app.main.show(new TodoListCompositeView(viewOptions));
-      app.footer.show(new Footer(viewOptions));
-
-      app.bindTo(viewOptions.collection, 'all', updateVisibility);
-      updateVisibility();
-    });
-
-    function updateVisibility() {
-      if (todoList.length === 0) {
-        app.main.$el.hide();
-        app.footer.$el.hide();
-      } else {
-        app.main.$el.show();
-        app.footer.$el.show();
+  App.addInitializer(function()
+  {
+    NotificationCenter.on('todoList:clear:completed',function()
+    {
+      function destroy(todo)
+      {
+        todo.destroy();
       }
-    }
-
-    vent.on('todoList:clear:completed',function(){
-      function destroy(todo)     { todo.destroy(); }
-
       todoList.getCompleted().forEach(destroy);
     });
+  });
 
-    return app;
+  App.addInitializer(function()
+  {
+    App.bindTo(todoList, 'all', function()
+    {
+      if (todoList.length === 0)
+      {
+        App.main.$el.hide();
+        App.footer.$el.hide();
+      }
+      else
+      {
+        App.main.$el.show();
+        App.footer.$el.show();
+      }
+    });
+  });
 
-  }
-);
+  return App;
+});

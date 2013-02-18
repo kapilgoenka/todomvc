@@ -1,34 +1,35 @@
-require.config({
-  paths : {
-    underscore : 'lib/underscore',
-    backbone   : 'lib/backbone',
-    marionette : 'lib/backbone.marionette',
+require.config(
+{
+  paths:
+  {
+    underscore : 'libs/underscore',
+    backbone   : 'libs/backbone',
+    backbone_localstorage   : 'libs/backbone-localStorage',
+    marionette : 'libs/backbone.marionette',
     jquery     : '../../../../assets/jquery.min',
-    tpl        : 'lib/tpl'
-  },
-  shim : {
-    'lib/backbone-localStorage' : ['backbone'],
-    underscore : {
-      exports : '_'
-    },
-    backbone : {
-      exports : 'Backbone',
-      deps : ['jquery','underscore']
-    },
-    marionette : {
-      exports : 'Backbone.Marionette',
-      deps : ['backbone']
-    }
-  },
-  deps : ['jquery','underscore']
+    tpl        : 'libs/tpl'
+  }
 });
 
-require(['app','backbone','routers/index','controllers/index'],function(app,Backbone,Router,Controller){
-  "use strict";
+require(['jquery', 'underscore'], function()
+{
+  require(['backbone'], function()
+  {
+    require(['marionette', 'backbone_localstorage'], function()
+    {
+      window.Marionette = Backbone.Marionette;
 
-  app.start();
-  new Router({
-    controller : Controller
+      require(['app', 'routers/index', 'controllers/index'], function(App, Router, Controller)
+      {
+        App.start();
+
+        new Router(
+        {
+          controller: Controller
+        });
+
+        Backbone.history.start();
+      });  
+    });
   });
-  Backbone.history.start();
 });

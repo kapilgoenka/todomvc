@@ -1,22 +1,32 @@
-define(['backbone','models/Todo','lib/backbone-localStorage'],function(Backbone,Todo) {
-  'use strict';
-
-  function isCompleted(todo) { return todo.get('completed'); }
-
-  var Todos = Backbone.Collection.extend({
+define([
+  'models/Todo'
+], function(Todo)
+{
+  return Backbone.Collection.extend(
+  {
     model: Todo,
+
     localStorage: new Backbone.LocalStorage('todos-backbone'),
 
-    getCompleted: function() {
-      return this.filter(isCompleted);
+    getCompleted: function()
+    {
+      return this.filter(function(todo)
+      {
+        return todo.isCompleted();
+      });
     },
-    getActive: function() {
-      return this.reject(isCompleted);
+
+    getActive: function()
+    {
+      return this.reject(function(todo)
+      {
+        return todo.isCompleted();
+      });
     },
-    comparator: function( todo ) {
-      return todo.get('created');
+
+    comparator: function(todo)
+    {
+      return todo.created();
     }
   });
-
-  return Todos;
 });

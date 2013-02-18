@@ -1,11 +1,9 @@
-/*global define*/
-
-define(['vent'], function (vent) {
-  "use strict";
-
+define(function()
+{
   return {
-    setFilter : function(param) {
-      vent.trigger('todoList:filter', param.trim() || '');
+    setFilter: function(param)
+    {
+      NotificationCenter.trigger('todoList:filter', param.trim() || '');
     }
   };
 });

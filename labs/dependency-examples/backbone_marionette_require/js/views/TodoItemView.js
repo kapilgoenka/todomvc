@@ -1,51 +1,64 @@
-/*global define*/
+define([
+  'templates'
+], function(templates)
+{
+  return Marionette.CompositeView.extend(
+  {
+    tagName: 'li',
 
-define(['marionette','templates'], function (Marionette,templates) {
-  "use strict";
+    template: templates.todoItemView,
 
-  return Marionette.CompositeView.extend({
-    tagName : 'li',
-    template : templates.todoItemView,
-
-    ui : {
-      edit : '.edit'
+    ui:
+    {
+      edit: '.edit'
     },
 
-    events : {
-      'click .destroy' : 'destroy',
-      'dblclick label' : 'editClick',
-      'keypress .edit' : 'updateOnEnter',
-      'click .toggle'  : 'toggle'
+    events:
+    {
+      'click .destroy': 'destroy',
+      'dblclick label': 'editClick',
+      'keypress .edit': 'updateOnEnter',
+      'click .toggle' : 'toggle'
     },
 
-    initialize : function() {
-      this.model.on('change',this.render,this);
+    initialize: function()
+    {
+      this.model.on('change', this.render, this);
     },
 
-    onRender : function() {
+    onRender: function()
+    {
       this.$el.removeClass('active completed');
-      if (this.model.get('completed')) this.$el.addClass('completed');
-      else this.$el.addClass('active');
+
+      if (this.model.get('completed'))
+        this.$el.addClass('completed');
+      else
+        this.$el.addClass('active');
     },
 
-    destroy : function() {
+    destroy: function()
+    {
       this.model.destroy();
     },
 
-    toggle  : function() {
+    toggle: function()
+    {
       this.model.toggle().save();
     },
 
-    editClick : function() {
+    editClick: function()
+    {
       this.$el.addClass('editing');
       this.ui.edit.focus();
     },
 
-    updateOnEnter : function(evt) {
+    updateOnEnter: function(evt)
+    {
       var ENTER_KEY = 13;
       var todoText = this.ui.edit.val().trim();
 
-      if ( evt.which === ENTER_KEY && todoText ) {
+      if ( evt.which === ENTER_KEY && todoText )
+      {
         this.model.set('title', todoText).save();
         this.$el.removeClass('editing');
       }
